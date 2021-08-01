@@ -1,6 +1,6 @@
 import java.util.Scanner; 
 
-// a scanner isn't really necessary, I just implemented it to easily change the grid size however
+// a scanner isn't really necessary, I just implemented it to easily change the grid size
 
 public class GOL {
 
