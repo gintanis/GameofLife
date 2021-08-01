@@ -1,0 +1,190 @@
+import java.util.Scanner; 
+
+// a scanner isn't really necessary, I just implemented it to easily change the grid size however
+
+public class GOL {
+
+
+
+    // Initializer
+    public static void init(boolean[][] alive, double alivePerc)
+    {
+        //assume the grid is squared
+        int n = alive.length; 
+
+        for(int i = 0; i < n; ++i)
+        {
+            for(int j = 0; j < n; ++j)
+            {
+                alive[i][j] = Math.random() < alivePerc;
+            }
+        }
+    }
+    
+    
+
+    //Prints the characters
+    public static void print(boolean[][] alive)
+    {
+        char aliveChar = (char) 0x2B1B;
+        //assume the grid is squared
+        int n = alive.length;
+        
+                 
+                
+        for(int i = 0; i < n; ++i)
+        {
+            for(int j = 0; j < n; ++j)
+            {
+                if(alive[i][j])
+                    System.out.print(aliveChar);
+                else
+                    System.out.print("  ");
+            }
+
+            System.out.println("");
+        }
+    }
+    
+    
+    
+    //Checks to see if a cell is 'alive'
+    public static boolean isAlive(boolean[][] alive, int i, int j)
+    {
+
+        int n = alive.length;
+        int x = (i+n) % n;
+        int y = (j+n) % n;
+
+        return alive[x][y];
+    }
+    
+    
+
+    //Counts the amount of alive neighbors of course. This is important for the next function.
+    public static int countAliveNeighs(boolean[][] alive, int i, int j)
+    {
+        int nAlive = 0;
+        for(int x = i-1; x <= i+1; x++)
+        {
+            for(int y = j-1; y <= j+1; y++)
+            {
+                if(x == i && y == j)
+                    continue;
+
+                if(isAlive(alive, x, y)) 
+                    nAlive++;
+            }
+        }
+
+        return nAlive;
+    }
+    
+    
+    
+    
+    /* This 'updates' the grid each time it is printed. 
+     *
+     * Based on the rules of the game: 
+     *  a cell with less than 2 neighbors will die of lonliness :( 
+     *  a cell with 2 or 3 neighbor survives!
+     *  a cell with more than 3 neighbors will die due to overcrowding 
+     *
+     *  you can see how these rules are implemented within the nested for loop in the function below
+     */
+    
+    public static void update(boolean[][] alive, int [] born, int [] surviving )
+    {
+        //assume the grid is squared
+        int n = alive.length; //len(alive)
+
+        boolean[][] newAlive = alive;
+
+        for(int i = 0; i < n; ++i)
+        {
+                for(int j = 0; j < n; ++j)
+            {
+                
+                int nAlive = countAliveNeighs(alive, i, j);
+                if(isAlive(alive, i, j))
+                {
+                    if(nAlive < 2)
+                        newAlive[i][j] = false;
+                    else if(nAlive == 2 || nAlive == 3)
+                        newAlive[i][j] = true;
+                    else
+                        newAlive[i][j] = false;
+                }
+                else
+                {
+                    if(nAlive == 3)
+                        newAlive[i][j] = true;
+                    else
+                        newAlive[i][j] = false;
+                }
+                
+                for(int x = 0; x < n; ++x)
+                    {
+                        for(int y = 0; y < n; ++y)
+                        {
+                            alive[x][y] = newAlive[x][y];
+                        }
+                    }
+            }
+        }
+
+
+    }
+
+    
+    public static void main(String[] args) {
+       
+        Scanner grid = new Scanner(System.in);
+        System.out.println("Input your row size: "); 
+        int inputRow = grid.nextInt();
+        System.out.println("Input your column size"); 
+        int inputCol = grid.nextInt();
+        
+      
+        int [] born = {3}; 
+        int [] surviving = {2, 3};
+        boolean[][] alive = new boolean[inputRow][inputCol];      
+        init(alive, .2);
+        int j = 0; 
+
+        
+        while (j < 10)
+        {
+
+             
+             print(alive);                  
+             update(alive, born, surviving);
+                       
+            
+             try 
+            {
+                Thread.sleep(200);
+            } 
+            catch(InterruptedException e)
+            {
+                 // this part is executed when an exception (in this example InterruptedException) occurs
+            }
+
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            
+            if (j >= 10)
+            {
+                
+                break;
+            }
+            else 
+            {
+                j++;
+                continue; 
+
+            }
+        }
+       
+    }
+}
