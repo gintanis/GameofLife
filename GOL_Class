@@ -124,16 +124,14 @@ public class GOL {
                 }
                 
                 for(int x = 0; x < n; ++x)
+                {
+                    for(int y = 0; y < n; ++y)
                     {
-                        for(int y = 0; y < n; ++y)
-                        {
-                            alive[x][y] = newAlive[x][y];
-                        }
+                        alive[x][y] = newAlive[x][y];
                     }
+                }
             }
         }
-
-
     }
 
     
